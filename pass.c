@@ -106,7 +106,7 @@ void pass(){
     stdscr = newwin(23, 54, 1, 13);
     refresh();
 
-    logwin = newwin(16, 14, 1+5, 13+41);
+    logwin = newwin(16, 14, 1+5, 13+40);
     scrollok(logwin, 1);
     wmove(logwin, 15, 0);
 
@@ -297,7 +297,7 @@ void pass(){
                 charCounter++;
             }
             // Clear the > prompt, which previously contained the entire highlighted string
-            mvprintw(21,41,"            ",currentChar[0]);
+            mvprintw(21,41,"            ");
             needsClearing = 0;
             move(y,origx);
         }
@@ -318,7 +318,7 @@ void pass(){
                     }
                 }
             }
-            mvprintw(21,41,"            ",currentChar[0]);
+            mvprintw(21,41,"            ");
             needsClearingMultiLine = 0;
             move(y,x);
         }
@@ -472,8 +472,8 @@ void pass(){
             // Get past answers and shift them up along the right.
             // This "log" handles 5 previous commands.
 
-            mvinnstr(21,40, buf, 12);
-            wprintw(logwin, "%s\n", buf);
+            mvinnstr(21, 41, buf, 12);
+            wprintw(logwin, ">%s\n", buf);
 
             // If the char is a left bracket
             if(((currentChar[0]=='(') && currentCharContains(currentChar,')')) ||
@@ -569,6 +569,9 @@ void pass(){
                     wprintw(logwin, ">while system\n");
                     wprintw(logwin, ">is accessed.\n");
                     wrefresh(logwin);
+                    mvprintw(21,41,"            "); // clear > prompt
+                    move(21, 41); // put cursor at prompt
+                    refresh();
                     sleep(3);
                     initscr(); // reset to full screen
                     clear();

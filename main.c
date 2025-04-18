@@ -29,28 +29,28 @@ int main(int argc, char * argv[]){
 
     // Check if a difficulty arg was given
     if(argc > 1){
-        if(!strcmp(argv[1], "--veryEasy")) {
+        if(!strcmp(argv[1], "--very-easy")) {
             setVeryEasy();
         }
         if(!strcmp(argv[1], "--easy")) {
            setEasy();
-        } 
+        }
         else if(!strcmp(argv[1], "--average")) {
            setAverage();
-        } 
+        }
         else if(!strcmp(argv[1], "--hard")) {
            setHard();
-        } 
-        else if(!strcmp(argv[1], "--veryHard")) {
+        }
+        else if(!strcmp(argv[1], "--very-hard")) {
            setVeryHard();
-        } 
+        }
         else {
             printf("Invalid command. Type \"%s --help\" for usage and a list of commands.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
     }
     // Otherwise, read the file for words
-    else {    
+    else {
         //readWordsFromFile();
         setVeryEasy();
     }
