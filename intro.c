@@ -1,8 +1,8 @@
-// 
-// File: intro.c 
+//
+// File: intro.c
 // intro.c plays the introduction sequence
 // @author Josh Bicking <josh1147582>
-// // // // // // // // // // // // // // // // // // // // // // // 
+// // // // // // // // // // // // // // // // // // // // // // //
 
 #define _BSD_SOURCE /* for unistd.h */
 #ifdef _WIN32
@@ -24,48 +24,43 @@ void SLEEP(long delay) { while (delay -= 5) {} }
 #include "print.h"
 #include "intro.h"
 
-/// Plays the introduction sequence. 
+/// Plays the introduction sequence.
 ///
 void intro(){
     clear();
+    slowPrint("SECURITY RESET...", 0);
     SLEEP(250000);
-    
-    slowPrint("WELCOME TO ROBCO INDUSTRIES (TM) TERMLINK", 0);
 
-    move(1, 0);
-    refresh();
-    SLEEP(30000);
-    mvprintw(2,0,"%c", '>');
-    move(2,1);
+    slowPrint("WELCOME TO ROBCO INDUSTRIES (TM) TERMLINK", 2);
+    mvprintw(0, 0, "                 "); // clear SECURITY RESET...
+    mvprintw(4, 0, ">");
+    move(4, 1);
     refresh();
 
-    slowType("SET TERMINAL/INQUIRE", 2);
+    slowType("SET TERMINAL/INQUIRE", 4);
 
-    slowPrint("RIT-V300", 4);
+    slowPrint("RIT-V300", 6);
 
-    mvprintw(6,0,"%c", '>');
+    mvprintw(8, 0, ">");
     refresh();
-    slowType("SET FILE/PROTECTION=OWNER:RWED ACCOUNTS.F",6);
-    
-    mvprintw(7,0,"%c", '>');
+    slowType("SET FILE/PROTECTION=OWNER:RWED ACCOUNTS.F", 8);
+
+    mvprintw(9, 0, ">");
     refresh();
-    slowType("SET HALT RESTART/MAINT",7);
-    
-    slowPrint("Initializing Robco Industries(TM) Boot Agent v2.3.0",9);
+    slowType("SET HALT RESTART/MAINT", 9);
 
-    slowPrint("RBIOS-4.02.08.00 53EE5.E7.E8",10);
+    slowPrint("Initializing Robco Industries(TM) Boot Agent v2.3.0", 11);
+    slowPrint("RETROS BIOS", 12);
+    slowPrint("RBIOS-4.02.08.00 52EE5.E7.E8", 13);
+    slowPrint("Copyright 2201-2203 Robco Ind.", 14);
+    slowPrint("Uppermem: 64 KB", 15);
+    slowPrint("Root (5A8)", 16);
+    slowPrint("Maintenance Mode", 17);
 
-    slowPrint("Copyright 2201-22-3 Robco Ind.",11);
-
-    slowPrint( "Uppermem: 64 KB",12);
-
-    slowPrint("Root (5A8)",13);
-
-    slowPrint("Maintenance Mode",14);
-
-    mvprintw(16,0,"%c",'>');
+    mvprintw(19, 0, "%c", '>');
     refresh();
-    slowType("RUN DEBUG/ACCOUNTS.F",16);
+    slowType("RUN DEBUG/ACCOUNTS.F", 19);
+
     SLEEP(50000);
 }
 

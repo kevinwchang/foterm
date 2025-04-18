@@ -1,8 +1,8 @@
-// 
-// File: print.c 
+//
+// File: print.c
 // print.c handles printing of pre-game strings
 // @author Josh Bicking <josh1147582>
-// // // // // // // // // // // // // // // // // // // // // // // 
+// // // // // // // // // // // // // // // // // // // // // // //
 
 #define _BSD_SOURCE /* for unistd.h */
 #ifdef _WIN32
@@ -25,11 +25,9 @@ void SLEEP(long delay) { while (delay -= 5) {} }
 
 void slowPrint(char arr[], int line){
     int i;
-    for(i=0; (unsigned long)i<strlen(arr); i++){  
-        /* Print the current character in the current position. */
-        mvprintw(line,i,"%c",arr[i]);
-        /* Move the cursor to the next position */
-        move(line, i+1);
+    move(line, 0);
+    for(i=0; (unsigned long)i<strlen(arr); i++){
+        printw("%c",arr[i]);
         refresh();
         SLEEP(20000);
     }
@@ -38,10 +36,10 @@ void slowPrint(char arr[], int line){
 void slowType(char arr[], int line){
     int i;
     flushinp();
-    for(i=0; (unsigned long)i<strlen(arr); i++){  
+    move(line, 1);
+    for(i=0; (unsigned long)i<strlen(arr); i++){
         if (getch() == '\033') { pass(); } // on ESC, skip intro
-        mvprintw(line,i+1,"%c",arr[i]);
-        move(line, i+2);
+        printw("%c",arr[i]);
         refresh();
     }
     while (getch() != '\n') {}
@@ -49,9 +47,9 @@ void slowType(char arr[], int line){
 
 void passPrint(char arr[], int line){
     int i;
-    for(i=0; (unsigned long)i<strlen(arr); i++){  
-        mvprintw(line,i,"%c",arr[i]);
-        move(line, i+1);
+    move(line, 0);
+    for(i=0; (unsigned long)i<strlen(arr); i++){
+        printw("%c",arr[i]);
         refresh();
         SLEEP(20000);
     }
@@ -61,7 +59,7 @@ int kbhit(){
     /* Get the current char. */
     int ch = getch();
 
-    /* Returns true if a key has been hit. False if it hasn't. */ 
+    /* Returns true if a key has been hit. False if it hasn't. */
     if (ch > ERR) {
         return 1;
     } else {

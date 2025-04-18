@@ -245,28 +245,19 @@ void pass(){
         getyx(stdscr,y,x);
 
         // Get allowances left
-        mvprintw(1,0,"                                 ");
-        mvprintw(3,0,"                              ");
         switch(allowances){
-            case 1: mvprintw(3,0,"1 ATTEMPT(S) LEFT: *");
-                    //attron(A_BLINK);
-                    //printw("\033[5m");
+            case 1: mvprintw(3,0,"1 ATTEMPT(S) LEFT: *  ");
                     mvprintw(1,0,"\033[5m!!! WARNING: LOCKOUT IMMINENT !!!\033[m");
-                    //attroff(A_BLINK);
-                    //printw("\033[m");
-                    //attron(A_BOLD);
                     break;
-            case 2: mvprintw(3,0,"2 ATTEMPT(S) LEFT: * *");
-                    mvprintw(1,0,"ENTER PASSWORD NOW");
+            case 2: mvprintw(3,0,"2 ATTEMPT(S) LEFT: * *  ");
                     break;
-            case 3: mvprintw(3,0,"3 ATTEMPT(S) LEFT: * * *");
-                    mvprintw(1,0,"ENTER PASSWORD NOW");
+            case 3: mvprintw(3,0,"3 ATTEMPT(S) LEFT: * * *  ");
                     break;
             case 4: mvprintw(3,0,"4 ATTEMPT(S) LEFT: * * * *");
-                    mvprintw(1,0,"ENTER PASSWORD NOW");
                     break;
             case 0: //clear();
                     mvprintw(3,0,"0 ATTEMPT(S) LEFT:");
+                    mvprintw(1,0,"                                 ");
                     move(y,x);
                     refresh();
                     sleep(1);
