@@ -87,6 +87,7 @@ void pass(){
     int allCorrect;
     int rightLetters;
     char buf[15];
+    WINDOW * logwin;
 
     // Note: Most of the strings in this function are NOT NUL terminated (they
     // do not end with a \0, and will not work with many of the string.h
@@ -104,6 +105,10 @@ void pass(){
     delwin(stdscr);
     stdscr = newwin(23, 54, 1, 13);
     refresh();
+
+    logwin = newwin(16, 14, 1+5, 13+41);
+    scrollok(logwin, 1);
+    wmove(logwin, 15, 0);
 
     // Intro text
     passPrint("ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL",0);
@@ -467,17 +472,9 @@ void pass(){
             // Get past answers and shift them up along the right.
             // This "log" handles 5 previous commands.
 
-            mvprintw(5,41,"             ");
-            mvprintw(6,41,"             ");
-            mvprintw(7,41,"             ");
+            mvinnstr(21,40, buf, 12);
+            wprintw(logwin, "%s\n", buf);
 
-            for(i=8; i<19; i+=3) {
-                for(j=0; j< 3; j++){
-                    mvinnstr(i+j, 40, buf, 14);
-                    mvprintw(i+j,40,"             ");
-                    mvprintw(i+j-3, 40, "%s", buf);
-                }
-            }
             // If the char is a left bracket
             if(((currentChar[0]=='(') && currentCharContains(currentChar,')')) ||
                (currentChar[0]=='<' && currentCharContains(currentChar,'>')) ||
@@ -489,10 +486,8 @@ void pass(){
                 bracketTricks++;
                 if(rand()%5==0){
                     // 20% chance of allowance replenish
-                    mvinnstr(21,40, buf, 14);
-                    mvprintw(17,40, "%s", buf);
-                    mvprintw(18,40,">Allowance   ");
-                    mvprintw(19,40,">replenished.");
+                    wprintw(logwin, ">Allowance\n");
+                    wprintw(logwin, ">replenished.\n");
                     allowances = 4;
                 }
                 else{
@@ -553,12 +548,8 @@ void pass(){
                             tempy++;
                         }
                     }
-
-                    mvinnstr(21,40, buf, 14);
-                    mvprintw(17,40, "%s", buf);
-                    mvprintw(18,40,">Dud");
-                    mvprintw(19,40,">removed.");
-
+                    wprintw(logwin, ">Dud\n");
+                    wprintw(logwin, ">removed.\n");
                 }
             }
             // Else compare it to the correct word
@@ -569,17 +560,15 @@ void pass(){
                     if(currentChar[i]!=correctWord[i])
                         rightLetters--;
                 }
+
                 // If all letters matched, it's the correct word
                 if(rightLetters==WORD_SIZE){
-                    mvprintw(15,40,">");
-                    for(i=0;i<12;i++){
-                        mvprintw(15,41+i,"%c",currentChar[i]);
-                    }
-                    mvprintw(16,40,">Exact match!");
-                    mvprintw(17,40,">Please wait ");
-                    mvprintw(18,40,">while system");
-                    mvprintw(19,40,">is accessed.");
-                    refresh();
+                    fputs("\a", stdout); // beep
+                    wprintw(logwin, ">Exact match!\n");
+                    wprintw(logwin, ">Please wait\n");
+                    wprintw(logwin, ">while system\n");
+                    wprintw(logwin, ">is accessed.\n");
+                    wrefresh(logwin);
                     sleep(3);
                     initscr(); // reset to full screen
                     clear();
@@ -596,23 +585,22 @@ void pass(){
                 }
                 // Otherwise, print the number right , decrement allowances, and prompt again
                 else{
-                    mvprintw(17,40,">");
-                    for(i=0;i<12;i++){
-                        mvprintw(17,41+i,"%c",currentChar[i]);
-                    }
-                    mvprintw(18,40,">Entry denied");
+                    fputs("\a\a", stdout); // beep beep
+                    wprintw(logwin, ">Entry denied\n");
                     allowances--;
                     if (allowances)
-                        mvprintw(19,40,">%d/%d correct%s",rightLetters,
-                                 WORD_SIZE,WORD_SIZE<10?".":"");
+                        wprintw(logwin,">%d/%d correct%s\n",
+                                  rightLetters, WORD_SIZE,
+                                  WORD_SIZE < 10 ? "." : "");
                     else{
-                        mvprintw(19,40,">Lockout in  ");
-                        mvprintw(20,40,"progress.    ");
+                        wprintw(logwin, ">Lockout in\n");
+                        wprintw(logwin, "progress.\n");
                     }
                 }
             }
             move(y,x);
         }
+        wrefresh(logwin);
         refresh();
 
     }
