@@ -1,38 +1,9 @@
-CC = gcc
-CFLAGS = -std=c99 
+OBJS = main.o print.o intro.o pass.o wordParse.o getline.o getdelim.o shim.o
 
-# DEBUGGING FLAGS
-# CFLAGS = -ggdb -Wall -Wextra -pedantic -std=c99
+foterm: ${OBJS}
+	cc -i -o $@ ${OBJS} -lcurses -ltermcap
 
-ifeq ($(OS),Windows_NT)
-	CFLAGS += -lpdcurses -static
-else
-	CFLAGS += -lncurses
-endif
-
-FalloutTerminal: main.o print.o intro.o pass.o wordParse.o getline.o getdelim.o
-	$(CC) -o $@ $^ $(CFLAGS) 
-
-main.o: main.c intro.c pass.c
-
-intro.o: intro.c print.c
-
-print.o: print.c
-
-pass.o: pass.c print.c
-
-wordParse.o: wordParse.c
-
-getline.o: getline.c 
-
-getdelim.o: getdelim.c
+%.o: %.c
 
 clean:
-ifeq ($(OS),Windows_NT)
-	del *.o FalloutTerminal.exe
-else
-	rm -f *.o FalloutTerminal
-endif
-
-debug: main.c print.c intro.c pass.c wordParse.c getline.c getdelim.c
-	$(CC) -o FalloutTerminal $^ $(CFLAGS) -ggdb
+	rm -f *.o foterm

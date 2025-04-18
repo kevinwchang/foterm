@@ -10,48 +10,46 @@
 #   include <curses.h>
 #   define SLEEP(delay) Sleep(delay/1000)
 #else
-#   include <ncurses.h>
+#   include <curses.h>
 #   include <unistd.h>
-#   define SLEEP(delay) usleep(delay)
+//#   define SLEEP(delay) sleep(delay/1000000)
+void SLEEP(long delay) { while (delay -= 5) {} }
 #endif
 
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
 #include "print.h"
 #include "pass.h"
 
 void slowPrint(char arr[], int line){
-    for(int i=0; (unsigned long)i<strlen(arr); i++){  
+    int i;
+    for(i=0; (unsigned long)i<strlen(arr); i++){  
         /* Print the current character in the current position. */
         mvprintw(line,i,"%c",arr[i]);
         /* Move the cursor to the next position */
         move(line, i+1);
         refresh();
-        /* If any keyboard input was recieved, go directly to pass(), otherwise continue */
-        if(kbhit()){
-            pass();
-        }
         SLEEP(20000);
     }
-    return;
 }
 
 void slowType(char arr[], int line){
-    for(int i=0; (unsigned long)i<strlen(arr); i++){  
+    int i;
+    flushinp();
+    for(i=0; (unsigned long)i<strlen(arr); i++){  
+        if (getch() == '\033') { pass(); } // on ESC, skip intro
         mvprintw(line,i+1,"%c",arr[i]);
         move(line, i+2);
         refresh();
-        if(kbhit()){
-            pass();
-        }
-        SLEEP(70000);
     }
-    return;
+    while (getch() != '\n') {}
 }
 
 void passPrint(char arr[], int line){
-    for(int i=0; (unsigned long)i<strlen(arr); i++){  
+    int i;
+    for(i=0; (unsigned long)i<strlen(arr); i++){  
         mvprintw(line,i,"%c",arr[i]);
         move(line, i+1);
         refresh();
@@ -64,7 +62,7 @@ int kbhit(){
     int ch = getch();
 
     /* Returns true if a key has been hit. False if it hasn't. */ 
-    if (ch != ERR) {
+    if (ch > ERR) {
         return 1;
     } else {
         return 0;
@@ -72,10 +70,16 @@ int kbhit(){
 }
 
 void printChoices(int hex, char arr[], int line, int offset){
-    mvprintw(line,offset,"0x%X", hex);
-    for(int i=0; i<12; i++)
+    int i;
+    char hexstr[5];
+
+    sprintf(hexstr, "%4x", hex);
+    for(i=0; i<4; i++)
+        if (isalpha(hexstr[i])) hexstr[i] = toupper(hexstr[i]);
+    mvprintw(line,offset,"0x%s", hexstr);
+    for(i=0; i<12; i++)
         mvprintw(line,7+offset+i,"%c",arr[i]);
-    move(line, 20+offset);
+    //move(line, 20+offset);
     refresh();
     SLEEP(30000);
 }

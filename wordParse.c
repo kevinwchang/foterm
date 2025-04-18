@@ -24,9 +24,14 @@ char * completeProg;
 keyConfig_type keyConfig = ARROWS;
 
 void readWordsFromFile(){
+    int i;
+    char * buf;
+    size_t n = 0;
+    int invalidChars = 0;
+    int dupes = 0;
 
     // Open the config file
-    FILE * fp = fopen("FalloutTerminal.cfg", "r");
+    FILE * fp = fopen("foterm.cfg", "r");
 
     // If there's no config file, default to very easy
     if(fp == NULL) {
@@ -35,8 +40,6 @@ void readWordsFromFile(){
     }
 
     // Check each line for valid words. Stop once launching is reached.
-    char * buf;
-    size_t n = 0;
     
     numWords = 0;
 
@@ -54,8 +57,7 @@ void readWordsFromFile(){
         }
 
         // Check all chars in buf are A-Z or a-z
-        int invalidChars = 0;
-        for(int i=0; (unsigned long)i<strlen(buf); i++){
+        for(i=0; (unsigned long)i<strlen(buf); i++){
            if(buf[i] > 64 && buf[i] < 91)
               continue;
            else if(buf[i] > 96 && buf[i] < 123)
@@ -74,8 +76,7 @@ void readWordsFromFile(){
                 continue;
 
             // Check the word doesn't already exist in the list
-            int dupes = 0;
-            for(int i=0; i < numWords; i++)
+            for(i=0; i < numWords; i++)
                 if(!strcmp(*(wordArr+i), buf))
                     dupes = 1;
 
@@ -109,17 +110,17 @@ void readWordsFromFile(){
 }
 
 void readLaunches(){
+    char * buf;
+    size_t n = 0;
 
     // Reopen the file
-    FILE * fp = fopen("FalloutTerminal.cfg", "r");
+    FILE * fp = fopen("foterm.cfg", "r");
 
     // If the file doesn't exist, stop
     if(fp == NULL){
         return;
     }
 
-    char * buf;
-    size_t n = 0;
 
     // Look for the parameters.
     while(getline(&buf, &n, fp) != -1){
@@ -146,16 +147,16 @@ void readLaunches(){
 }
 
 void readKeys(){
+    char * buf;
+    size_t n = 0;
     // Reopen the file
-    FILE * fp = fopen("FalloutTerminal.cfg", "r");
+    FILE * fp = fopen("foterm.cfg", "r");
 
     // If the file doesn't exist, stop
     if(fp == NULL){
         return;
     }
 
-    char * buf;
-    size_t n = 0;
 
     while(getline(&buf, &n, fp) != -1){
 
@@ -178,18 +179,19 @@ void readKeys(){
 }
 
 void setWordArr(char *words[]){
+    /*int i;
     wordArr = malloc(numWords * sizeof(char*));
 
-    for(int i=0; i<numWords; i++) {
+    for(i=0; i<numWords; i++) {
             *(wordArr+i) = malloc(sizeof(char) * (strlen(words[0])+1));
             strcpy(*(wordArr+i), *(words+i));
-    }
-
+    }*/
+    wordArr = words;
 }
 
 void setVeryEasy() {
 
-    char * words[] = {
+    static char * words[] = {
         "FRIED",
         "TREES",
         "RIGID",
@@ -229,7 +231,7 @@ void setVeryEasy() {
 }
 void setEasy() {
 
-    char * words[] = {
+    static char * words[] = {
         "STATING",
         "HEALING",
         "COSTING",
@@ -272,7 +274,7 @@ void setEasy() {
 
 }void setAverage() {
 
-    char * words[] = {
+    static char * words[] = {
         "CONQUORER",
         "CONSISTED",
         "WONDERFUL",
@@ -323,7 +325,7 @@ void setEasy() {
 
 }void setHard() {
 
-    char * words[] = {
+    static char * words[] = {
         "DISCOVERING",
         "ELIMINATING",
         "UNIMPORTANT",
@@ -354,7 +356,7 @@ void setEasy() {
 
 }void setVeryHard() {
 
-    char * words[] = {
+    static char * words[] = {
         "INFILTRATION",
         "ORGANIZATION",
         "AUTHENTICITY",
@@ -419,9 +421,10 @@ keyConfig_type getKeyConfig(){
 }
 
 void freeAll() {
-    for(int i=0; i<numWords; i++)
+    int i;
+    /*for(i=0; i<numWords; i++)
         free(*(wordArr+i));
-    free(wordArr);
+    free(wordArr);*/
     free(victoryProg);
     free(completeProg);
 }

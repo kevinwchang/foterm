@@ -19,7 +19,7 @@
 /* Written by Simon Josefsson. */
 
 /* Get size_t, FILE, ssize_t.  And getdelim, if available.  */
-# include <stddef.h>
+//# include <stddef.h>
 # include <stdio.h>
 # include <sys/types.h>
 

@@ -13,9 +13,10 @@
 #else
 // Unix requires unistd.h for usleep(microseconds).
 // usleep/1000 = Sleep
-#   include <ncurses.h>
+#   include <curses.h>
 #   include <unistd.h>
-#   define SLEEP(delay) usleep(delay)
+//#   define SLEEP(delay) sleep(delay/200000)
+void SLEEP(long delay) { while (delay -= 5) {} }
 #endif
 
 #include <string.h>
@@ -37,7 +38,6 @@ void intro(){
     mvprintw(2,0,"%c", '>');
     move(2,1);
     refresh();
-    SLEEP(1500000);
 
     slowType("SET TERMINAL/INQUIRE", 2);
 
@@ -45,12 +45,10 @@ void intro(){
 
     mvprintw(6,0,"%c", '>');
     refresh();
-    SLEEP(1500000);
     slowType("SET FILE/PROTECTION=OWNER:RWED ACCOUNTS.F",6);
     
     mvprintw(7,0,"%c", '>');
     refresh();
-    SLEEP(1500000);
     slowType("SET HALT RESTART/MAINT",7);
     
     slowPrint("Initializing Robco Industries(TM) Boot Agent v2.3.0",9);
@@ -67,10 +65,7 @@ void intro(){
 
     mvprintw(16,0,"%c",'>');
     refresh();
-    SLEEP(1500000);
     slowType("RUN DEBUG/ACCOUNTS.F",16);
-    move(16,0);
-    refresh();
     SLEEP(50000);
 }
 
