@@ -29,9 +29,9 @@ void SLEEP(long delay) { while (delay -= 5) {} }
 #define OFFSET_RIGHT 20
 #define BIGSTRING_SIZE 408
 
-#define mvinnstr(y, x, str, n) (VOID(move((y),(x))==ERR?ERR:innstr((str),(n))))
+#define mvinnstr(y, x, str, n) (VOID(move((y), (x))==ERR?ERR:innstr((str), (n))))
 
-static int currentCharContains(char arr[],char c){
+static int currentCharContains(char arr[], char c){
     int i;
     for(i=0; i<12; i++)
         if(arr[i]==c)
@@ -65,7 +65,7 @@ void pass(){
     char temp[12];
     int current = 0;
     char currentChar[12]; // Max length currentChar could be (total possible length of a bracket trick)
-    int y,x;                            // values that keep track of current yx locations
+    int y, x;                            // values that keep track of current yx locations
     int origy, origx;                   // yx values from the previous cycle. Used for clearing highlights
     int starty, startx;                 // yx values used for storing the start of a word
     int wordLength;                     // How long a word is
@@ -111,7 +111,7 @@ void pass(){
     wmove(logwin, 15, 0);
 
     // Intro text
-    passPrint("ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL",0);
+    passPrint("ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL", 0);
 
     passPrint("ENTER PASSWORD NOW", 1);
 
@@ -192,7 +192,7 @@ void pass(){
         for(j=0; j<12; j++){
             temp[j] = bigString[j+current];
         }
-        printChoices(arbHex,temp,i, OFFSET_LEFT);
+        printChoices(arbHex, temp, i, OFFSET_LEFT);
         current = current + 12;
         arbHex = arbHex + 12;
     }
@@ -202,18 +202,18 @@ void pass(){
         for(j=0; j<12; j++){
             temp[j] = bigString[j+current];
         }
-        printChoices(arbHex,temp,i, OFFSET_RIGHT);
+        printChoices(arbHex, temp, i, OFFSET_RIGHT);
         current = current + 12;
         arbHex = arbHex + 12;
     }
 
 
     // Print the cursor and move the selection to the top left
-    mvprintw(21,40,"%c",'>');
-    move(5,7);
+    mvprintw(21, 40, "%c", '>');
+    move(5, 7);
     refresh();
 
-    currentChar[0] = (char)mvinch(5,7);
+    currentChar[0] = (char)mvinch(5, 7);
 
 
 
@@ -242,62 +242,64 @@ void pass(){
     flushinp();
 
     while(1){
-        getyx(stdscr,y,x);
+        getyx(stdscr, y, x);
 
         // Get allowances left
+        mvprintw(3, 0, "%d", allowances);
         switch(allowances){
-            case 1: mvprintw(3,0,"1 ATTEMPT(S) LEFT: *  ");
-                    mvprintw(1,0,"\033[5m!!! WARNING: LOCKOUT IMMINENT !!!\033[m");
-                    break;
-            case 2: mvprintw(3,0,"2 ATTEMPT(S) LEFT: * *  ");
-                    break;
-            case 3: mvprintw(3,0,"3 ATTEMPT(S) LEFT: * * *  ");
-                    break;
-            case 4: mvprintw(3,0,"4 ATTEMPT(S) LEFT: * * * *");
-                    break;
+            case 1:
+                mvprintw(1, 0, "\033[5m!!! WARNING: LOCKOUT IMMINENT !!!\033[m");
+                // fall through
+
+            case 2:
+            case 3:
+            case 4:
+                mvprintw(3, 19 + 2 * allowances, " "); // erase a *
+                break;
+
             case 0: //clear();
-                    mvprintw(3,0,"0 ATTEMPT(S) LEFT:");
-                    mvprintw(1,0,"                                 ");
-                    move(y,x);
-                    refresh();
-                    sleep(1);
+                mvprintw(1, 0, "                                 "); // erase !!! WARNING: LOCKOUT IMMINENT !!!
+                mvprintw(3, 19, " "); // erase last *
+                move(y, x);
+                refresh();
+                sleep(1);
 
-                    // scroll to clear screen
-                    move(22, 0);
-                    refresh();
-                    for(i=0; i<23; i++) { puts(""); SLEEP(200000); }
+                // scroll to clear screen
+                move(22, 0);
+                refresh();
+                for(i=0; i<23; i++) { puts(""); SLEEP(200000); }
 
-                    clear();
-                    mvprintw(10,20,"TERMINAL LOCKED");
-                    mvprintw(12,12,"PLEASE CONTACT AN ADMINISTRATOR");
-                    refresh();
-                    while(1) { sleep(1); }
+                clear();
+                mvprintw(10, 20, "TERMINAL LOCKED");
+                mvprintw(12, 12, "PLEASE CONTACT AN ADMINISTRATOR");
+                refresh();
+                while(1) { sleep(1); }
         }
         refresh();
 
         // Move the cursor back to where it was
-        move(y,x);
+        move(y, x);
 
         // Check if highlights need to be purged
         if(needsClearing){
             // Grab each character printed, and reprint it without a highlight
             charCounter = 0;
             while(charCounter!=bracketLength+1){
-                currentChar[charCounter] = (char)mvinch(origy,charStart+charCounter);
-                mvprintw(origy,charStart+charCounter,"%c",(int)currentChar[charCounter]);
+                currentChar[charCounter] = (char)mvinch(origy, charStart+charCounter);
+                mvprintw(origy, charStart+charCounter, "%c", (int)currentChar[charCounter]);
                 charCounter++;
             }
             // Clear the > prompt, which previously contained the entire highlighted string
-            mvprintw(21,41,"            ");
+            mvprintw(21, 41, "            ");
             needsClearing = 0;
-            move(y,origx);
+            move(y, origx);
         }
         if(needsClearingMultiLine){
             charCounter = 0;
             // Same as above, but jumps between lines if necessary
             while(charCounter!=wordLength){
-                currentChar[charCounter] = (char)mvinch(starty,startx);
-                mvprintw(starty,startx,"%c",currentChar[charCounter]);
+                currentChar[charCounter] = (char)mvinch(starty, startx);
+                mvprintw(starty, startx, "%c", currentChar[charCounter]);
                 charCounter++;
                 startx++;
                 if(startx==19 || startx==39){
@@ -309,25 +311,25 @@ void pass(){
                     }
                 }
             }
-            mvprintw(21,41,"            ");
+            mvprintw(21, 41, "            ");
             needsClearingMultiLine = 0;
-            move(y,x);
+            move(y, x);
         }
         // Clear the char array
         for(i=0;i<12;i++)
             currentChar[i]=' ';
-        currentChar[0] = (char) (char)mvinch(y,x);
+        currentChar[0] = (char) (char)mvinch(y, x);
         // Set the new y and x to origy and origx
         origy = y;
         origx = x;
         // Check for bracket tricks
-        if((currentChar[0]=='(' || currentChar[0]=='<' || currentChar[0]=='[' || currentChar[0]=='{') && usedBrackets[getCharLoc(y,x)] && bracketTricks<WORDS_CHOSEN){
+        if((currentChar[0]=='(' || currentChar[0]=='<' || currentChar[0]=='[' || currentChar[0]=='{') && usedBrackets[getCharLoc(y, x)] && bracketTricks<WORDS_CHOSEN){
             charStart = x;
             bracketLength=0;
             // Check any chars to the right of the current char for a corresponding bracket
             while(x!=18 && x!=38){
                 x++;
-                endBracket = (char)mvinch(y,x);
+                endBracket = (char)mvinch(y, x);
                 bracketLength++;
             if((endBracket == ')' && currentChar[0]=='(') ||
                 (endBracket == '>' && currentChar[0]=='<') ||
@@ -337,8 +339,8 @@ void pass(){
                     standout();
                     charCounter = 0;
                     while(1){
-                        currentChar[charCounter] = (char)mvinch(y,charStart+charCounter);
-                        mvprintw(y,charStart+charCounter,"%c",currentChar[charCounter]);
+                        currentChar[charCounter] = (char)mvinch(y, charStart+charCounter);
+                        mvprintw(y, charStart+charCounter, "%c", currentChar[charCounter]);
                         if(currentChar[charCounter] == endBracket)
                             break;
                         charCounter++;
@@ -347,7 +349,7 @@ void pass(){
                     // Print the bracket trick to output
                     //attron(A_BOLD);
                     for(i=0;i<=charCounter;i++)
-                        mvprintw(21,41+i,"%c",(int)currentChar[i]);
+                        mvprintw(21, 41+i, "%c", (int)currentChar[i]);
                     // Notify that highlighting will need to be cleared next move
                     needsClearing = 1;
                 }
@@ -357,7 +359,7 @@ void pass(){
                 (endBracket == '>' && currentChar[0]=='<') ||
                 (endBracket == ']' && currentChar[0]=='[') ||
                 (endBracket == '}' && currentChar[0]=='{'))){
-                mvprintw(21,41,"%c",currentChar[0]);
+                mvprintw(21, 41, "%c", currentChar[0]);
             }
         }
         // Check for letters
@@ -365,8 +367,8 @@ void pass(){
             // Check for letter behind the current location
             tempx = x;
             tempy = y;
-            while(bigString[getCharLoc(tempy,tempx)-1]>64 && bigString[getCharLoc(tempy,tempx)-1]<91){
-                currentChar[0] = bigString[getCharLoc(tempy,tempx)];
+            while(bigString[getCharLoc(tempy, tempx)-1]>64 && bigString[getCharLoc(tempy, tempx)-1]<91){
+                currentChar[0] = bigString[getCharLoc(tempy, tempx)];
                 tempx--;
                 if(tempx==6 || tempx==26){
                     tempx+=12;
@@ -381,8 +383,8 @@ void pass(){
             starty = tempy; // We'll need the location of the first char for clean
             // And start there
             charCounter = 0;
-            while(bigString[getCharLoc(tempy,tempx)]>64 && bigString[getCharLoc(tempy,tempx)]<91){
-                currentChar[charCounter] = bigString[getCharLoc(tempy,tempx)];
+            while(bigString[getCharLoc(tempy, tempx)]>64 && bigString[getCharLoc(tempy, tempx)]<91){
+                currentChar[charCounter] = bigString[getCharLoc(tempy, tempx)];
                 charCounter++;
                 tempx++;
                 if(tempx==19 || tempx==39){
@@ -402,8 +404,8 @@ void pass(){
             standout();
             charCounter = 0;
             while(charCounter!=wordLength){
-                currentChar[charCounter] = (char)mvinch(tempy,tempx);
-                mvprintw(tempy,tempx,"%c",currentChar[charCounter]);
+                currentChar[charCounter] = (char)mvinch(tempy, tempx);
+                mvprintw(tempy, tempx, "%c", currentChar[charCounter]);
                 charCounter++;
                 tempx++;
                 if(tempx==19 || tempx==39){
@@ -419,42 +421,42 @@ void pass(){
                     // Print the word to output
                     //attron(A_BOLD);
                     for(i=0;i<charCounter;i++)
-                        mvprintw(21,41+i,"%c",(int)currentChar[i]);
+                        mvprintw(21, 41+i, "%c", (int)currentChar[i]);
                     // Notify that highlighting will need to be cleared next move
                     needsClearingMultiLine = 1;
         }
         // Nothing was found, print current char
         else
-            mvprintw(21,41,"%c",currentChar[0]);
+            mvprintw(21, 41, "%c", currentChar[0]);
 
-        move(origy,origx);
+        move(origy, origx);
         refresh();
 
         keyPress = getch();
-        getyx(stdscr,y,x);
+        getyx(stdscr, y, x);
         if(keyPress==GO_UP){
             if(y>5)
-                move(y-1,x);
+                move(y-1, x);
         }
         if(keyPress==GO_DOWN){
             if(y<21)
-                move(y+1,x);
+                move(y+1, x);
         }
         if(keyPress==GO_LEFT){
             if(x>7){
                 if(x==27)
-                    move(y,18);
+                    move(y, 18);
                 else
-                    move(y,x-1);
+                    move(y, x-1);
             }
 
         }
         if(keyPress==GO_RIGHT){
             if(x<38){
                 if(x==18)
-                    move(y,27);
+                    move(y, 27);
                 else
-                    move(y,x+1);
+                    move(y, x+1);
             }
         }
         if(keyPress==3)     // Ctrl-C
@@ -467,12 +469,12 @@ void pass(){
             wprintw(logwin, ">%s\n", buf);
 
             // If the char is a left bracket
-            if(((currentChar[0]=='(') && currentCharContains(currentChar,')')) ||
-               (currentChar[0]=='<' && currentCharContains(currentChar,'>')) ||
-               (currentChar[0]=='[' && currentCharContains(currentChar,']')) ||
-               (currentChar[0]=='{' && currentCharContains(currentChar,'}'))){
+            if(((currentChar[0]=='(') && currentCharContains(currentChar, ')')) ||
+               (currentChar[0]=='<' && currentCharContains(currentChar, '>')) ||
+               (currentChar[0]=='[' && currentCharContains(currentChar, ']')) ||
+               (currentChar[0]=='{' && currentCharContains(currentChar, '}'))){
                 // Set the selected bracket as used
-                usedBrackets[getCharLoc(y,x)] = 0;
+                usedBrackets[getCharLoc(y, x)] = 0;
                 // Increment total bracket tricks used
                 bracketTricks++;
                 if(rand()%5==0){
@@ -493,10 +495,10 @@ void pass(){
                         else
                             tempx = (rand()%12)+27;
                         tempy = (rand()%17)+5;
-                        } while(!(bigString[getCharLoc(tempy,tempx)]>64 && bigString[getCharLoc(tempy,tempx)]<91));
+                        } while(!(bigString[getCharLoc(tempy, tempx)]>64 && bigString[getCharLoc(tempy, tempx)]<91));
 
                         // Move tempx to the beginning of the word selected
-                        while(bigString[getCharLoc(tempy,tempx)-1]>64 && bigString[getCharLoc(tempy,tempx)-1]<91){
+                        while(bigString[getCharLoc(tempy, tempx)-1]>64 && bigString[getCharLoc(tempy, tempx)-1]<91){
                             tempx--;
                             if(tempx==6 || tempx==26){
                                 tempx+=12;
@@ -510,8 +512,8 @@ void pass(){
 
                         // Read the word into currentChar
                         charCounter = 0;
-                        while(bigString[getCharLoc(tempy,tempx)+1]>64 && bigString[getCharLoc(tempy,tempx)+1]<91){
-                            currentChar[charCounter] = bigString[getCharLoc(tempy,tempx)];
+                        while(bigString[getCharLoc(tempy, tempx)+1]>64 && bigString[getCharLoc(tempy, tempx)+1]<91){
+                            currentChar[charCounter] = bigString[getCharLoc(tempy, tempx)];
                             charCounter++;
                             tempx++;
                             if(tempx==19 || tempx==39){
@@ -530,9 +532,9 @@ void pass(){
 
                     tempx = startx;
                     tempy = starty;
-                    while(bigString[getCharLoc(tempy,tempx)]>64 && bigString[getCharLoc(tempy,tempx)]<91){
-                        mvprintw(tempy,tempx,"%c",'.');
-                        bigString[getCharLoc(tempy,tempx)] = '.';
+                    while(bigString[getCharLoc(tempy, tempx)]>64 && bigString[getCharLoc(tempy, tempx)]<91){
+                        mvprintw(tempy, tempx, "%c", '.');
+                        bigString[getCharLoc(tempy, tempx)] = '.';
                         tempx++;
                         if(tempx==19 || tempx==39){
                             tempx-=12;
@@ -560,7 +562,7 @@ void pass(){
                     wprintw(logwin, ">while system\n");
                     wprintw(logwin, ">is accessed.\n");
                     wrefresh(logwin);
-                    mvprintw(21,41,"            "); // clear > prompt
+                    mvprintw(21, 41, "            "); // clear > prompt
                     move(21, 41); // put cursor at prompt
                     refresh();
                     sleep(3);
@@ -583,7 +585,7 @@ void pass(){
                     wprintw(logwin, ">Entry denied\n");
                     allowances--;
                     if (allowances)
-                        wprintw(logwin,">%d/%d correct%s\n",
+                        wprintw(logwin, ">%d/%d correct%s\n",
                                   rightLetters, WORD_SIZE,
                                   WORD_SIZE < 10 ? "." : "");
                     else{
@@ -592,7 +594,7 @@ void pass(){
                     }
                 }
             }
-            move(y,x);
+            move(y, x);
         }
         wrefresh(logwin);
         refresh();
